@@ -2,7 +2,19 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsArray, IsEmail, IsString, IsDate, IsEnum } from 'class-validator';
 import { UserRoleEnum } from '../enums/user-role.enum';
 
-export class GetUserRequestDto {}
+export class GetUserRequestDto {
+  @ApiProperty()
+  @IsString()
+  _id?: string;
+
+  @ApiProperty()
+  @IsEmail()
+  email?: string;
+
+  @ApiProperty()
+  @IsEnum(UserRoleEnum, { each: true })
+  role: UserRoleEnum;
+}
 
 export class CreateUserRequestDto {
   @ApiProperty()
@@ -49,6 +61,4 @@ export class BankAccountDto {
   bank: string;
 }
 
-export class UpdateUserRequestDto extends PartialType(CreateUserRequestDto) {
-  _id: string;
-}
+export class UpdateUserRequestDto extends PartialType(CreateUserRequestDto) {}

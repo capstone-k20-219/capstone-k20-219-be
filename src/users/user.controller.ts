@@ -11,11 +11,14 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IsEmail } from 'class-validator';
 import {
   CreateUserRequestDto,
+  GetUserRequestDto,
   UpdateUserRequestDto,
 } from './dtos/user.request.dto';
 import * as bcrypt from 'bcrypt';
@@ -61,47 +64,51 @@ export class UserController {
 
   @Get()
   @UseGuards(RolesGuard)
+  @Roles(UserRoleEnum.USER)
+  async find(@Req() request: Request): Promise<UserEntity> {
+    const _id = request['user']._id;
+    return await this.userService.findOne({ _id: _id });
+  }
+
+  @Get('all')
+  @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
   async findAll(): Promise<UserEntity[]> {
-    return await this.userService.findAll();
+    const users = await this.userService.findAll();
+    return users;
   }
 
-  @Get('findUserById/:_id')
+  @Get('findByQuery')
   @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.USER)
-  async findOne(@Param('_id') _id: string): Promise<UserEntity> {
-    const result = await this.userService.findOne({ _id: _id });
-    return result;
-  }
-
-  @Get('findUsersByQuery/:email')
-  @IsEmail()
-  @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.USER)
-  async findOneByEmail(@Param('email') email: string): Promise<UserEntity> {
-    const user = await this.userService.findOne({
-      email: { $regex: email },
-    });
-
+  @Roles(UserRoleEnum.MANAGER)
+  async findOneByQuery(
+    @Query() filter: GetUserRequestDto,
+  ): Promise<UserEntity> {
+    const user = await this.userService.findOne(filter);
     return user;
   }
 
   @Put()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.USER)
-  async update(@Body() updateUserDto: UpdateUserRequestDto) {
+  async update(
+    @Req() request: Request,
+    @Body() updateUserDto: UpdateUserRequestDto,
+  ) {
+    const _id = request['user']._id;
     const result = await this.userService.findOneAndUpdate(
-      { _id: updateUserDto._id },
+      { _id: _id },
       updateUserDto,
     );
 
     return result;
   }
 
-  @Delete('/:_id')
+  @Delete()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.USER)
-  async deleteUser(@Param('_id') _id: string) {
+  async delete(@Req() request: Request) {
+    const _id = request['user']._id;
     const result = await this.userService.removeByConditions({
       _id: _id,
     });
