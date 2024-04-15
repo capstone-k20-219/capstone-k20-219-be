@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { UserModule } from './users/user.module';
 import { GlobalModule } from './shared/modules/global.module';
 import { AuthModule } from './auth/auth.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -14,6 +17,9 @@ import { AuthModule } from './auth/auth.module';
     GlobalModule,
     UserModule,
     AuthModule,
+    VehiclesModule,
+    VehicleTypesModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

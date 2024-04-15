@@ -27,7 +27,7 @@ export class AuthService {
       _id: user._id,
       email: user.email,
       name: user.name,
-      roles: user.role,
+      role: user.role,
     };
     return this._generateJWT(payload);
   }

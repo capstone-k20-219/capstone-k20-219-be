@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Logger,
-  Param,
   Post,
   Put,
   Delete,
@@ -13,9 +12,9 @@ import {
   BadRequestException,
   Req,
   Query,
+  Param,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
 import {
   CreateUserRequestDto,
   GetUserRequestDto,
@@ -96,9 +95,39 @@ export class UserController {
     @Body() updateUserDto: UpdateUserRequestDto,
   ) {
     const _id = request['user']._id;
+    const user = await this.userService.findOne({ _id: _id });
+
+    const hashedPassword = await bcrypt.hash(updateUserDto.password, this.salt);
+    const updateUser = {
+      ...updateUserDto,
+      password: hashedPassword,
+      role: user.role,
+    } as UserEntity;
+
     const result = await this.userService.findOneAndUpdate(
       { _id: _id },
-      updateUserDto,
+      updateUser,
+    );
+
+    return result;
+  }
+
+  @Put(':_id')
+  @UseGuards(RolesGuard)
+  @Roles(UserRoleEnum.MANAGER)
+  async updateForManager(
+    @Param('_id') _id: string,
+    @Body() updateUserDto: UpdateUserRequestDto,
+  ) {
+    const hashedPassword = await bcrypt.hash(updateUserDto.password, this.salt);
+    const updateUser = {
+      ...updateUserDto,
+      password: hashedPassword,
+    } as UserEntity;
+
+    const result = await this.userService.findOneAndUpdate(
+      { _id: _id },
+      updateUser,
     );
 
     return result;
