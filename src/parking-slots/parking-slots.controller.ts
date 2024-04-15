@@ -23,7 +23,6 @@ import {
   UpdateParkingSlotRequestDto,
 } from './dtos/parking-slot.dto';
 import { ParkingSlotEntity } from './entities/parking-slot.entity';
-import { connected } from 'process';
 
 @Controller('parking-slots')
 @ApiTags('Parking slots')
