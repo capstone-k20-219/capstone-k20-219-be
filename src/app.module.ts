@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
 import { CommentsModule } from './comments/comments.module';
+import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CommentsModule } from './comments/comments.module';
     VehiclesModule,
     VehicleTypesModule,
     CommentsModule,
+    ParkingSlotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
