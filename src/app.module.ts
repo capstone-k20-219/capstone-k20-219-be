@@ -10,6 +10,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
 import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
 import { CommentsModule } from './comments/comments.module';
 import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
     VehicleTypesModule,
     CommentsModule,
     ParkingSlotsModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

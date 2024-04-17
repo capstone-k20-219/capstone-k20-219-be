@@ -11,6 +11,9 @@ export class CommentEntity extends BaseEntity {
 
   @Prop()
   content: string;
+
+  @Prop()
+  rating: number;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(CommentEntity);
