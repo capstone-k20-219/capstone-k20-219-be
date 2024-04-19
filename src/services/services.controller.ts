@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -34,6 +35,12 @@ export class ServicesController {
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
   async create(@Body() service: CreateServiceRequestDto) {
+    const is_duplicated = await this.servicesService.findOne({
+      code: service.code,
+    });
+    if (is_duplicated) {
+      throw new BadRequestException('code_existed');
+    }
     return await this.servicesService.create(service);
   }
 

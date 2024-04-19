@@ -5,7 +5,7 @@ export class GetCommentDto {}
 
 export class CreateCommentDto {
   @ApiProperty()
-  service_code: string;
+  service_id: string;
 
   @ApiProperty()
   content: string;

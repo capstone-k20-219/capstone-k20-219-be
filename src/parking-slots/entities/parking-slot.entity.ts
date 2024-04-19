@@ -1,6 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseEntity } from 'src/shared/entities/base.entity';
 
+export class IParkingSlotCoordinate {
+  x_start: number;
+  x_end: number;
+  y_start: number;
+  y_end: number;
+}
+
 @Schema({ collection: 'ParkingSlots', timestamps: true })
 export class ParkingSlotEntity extends BaseEntity {
   @Prop()
@@ -11,13 +18,6 @@ export class ParkingSlotEntity extends BaseEntity {
 
   @Prop()
   coordinate: IParkingSlotCoordinate;
-}
-
-export class IParkingSlotCoordinate {
-  x_start: number;
-  x_end: number;
-  y_start: number;
-  y_end: number;
 }
 
 export const ParkingSlotSchema =

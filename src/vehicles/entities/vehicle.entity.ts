@@ -10,7 +10,7 @@ export class VehicleEntity extends BaseEntity {
   plate_no: string;
 
   @Prop()
-  type_code: string;
+  type_id: string;
 }
 
 export const VehicleSchema = SchemaFactory.createForClass(VehicleEntity);

@@ -20,14 +20,14 @@ export class CreateServiceRequestDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  price: ServicePriceDto[] | number;
+  price: ServicePriceDto[];
 }
 
 export class ServicePriceDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  type_code: string;
+  type_id: string;
 
   @ApiProperty()
   @IsNumber()

@@ -10,7 +10,7 @@ export class CreateVehicleRequestDto {
   plate_no: string;
 
   @ApiProperty()
-  type_code: string;
+  type_id: string;
 }
 
 export class UpdateVehicleRequestDto extends PartialType(

@@ -7,7 +7,7 @@ export class CommentEntity extends BaseEntity {
   user_id: string;
 
   @Prop()
-  service_code: string;
+  service_id: string;
 
   @Prop()
   content: string;

@@ -34,12 +34,14 @@ export class CommentsController {
     return await this.commentsService.create(newComment);
   }
 
-  @Get('/service/:code')
-  async getByService(@Param('code') code: string): Promise<CommentEntity[]> {
-    return await this.commentsService.find({ service_code: code });
+  @Get('/service/:id')
+  async getByService(
+    @Param('id') service_id: string,
+  ): Promise<CommentEntity[]> {
+    return await this.commentsService.find({ service_id: service_id });
   }
 
-  @Delete('_id')
+  @Delete(':_id')
   async deleteUserComment(@Req() request: Request, @Param('_id') _id: string) {
     const user = request['user'];
     const comment = await this.commentsService.findOne({ _id: _id });
@@ -50,5 +52,6 @@ export class CommentsController {
       throw new UnauthorizedException();
     }
     const result = await this.commentsService.removeByConditions({ _id: _id });
+    return result;
   }
 }
