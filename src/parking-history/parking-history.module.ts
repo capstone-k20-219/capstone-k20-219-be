@@ -6,6 +6,7 @@ import {
   ParkingHistoryEntity,
   ParkingHistorySchema,
 } from './entities/parking-history.entity';
+import { SlotBookingsModule } from 'src/slot-bookings/slot-bookings.module';
 
 @Module({
   imports: [

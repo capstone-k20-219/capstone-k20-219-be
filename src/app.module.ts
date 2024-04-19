@@ -13,6 +13,7 @@ import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
 import { ServicesModule } from './services/services.module';
 import { ParkingHistoryModule } from './parking-history/parking-history.module';
 import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
+import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ServiceBookingsModule } from './service-bookings/service-bookings.modul
     ServicesModule,
     ParkingHistoryModule,
     ServiceBookingsModule,
+    SlotBookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,12 +19,16 @@ import {
   UpdateParkingHistoryDto,
 } from './dtos/parking-history.request.dto';
 import { ParkingHistoryEntity } from './entities/parking-history.entity';
+import { SlotBookingsService } from 'src/slot-bookings/slot-bookings.service';
 
 @Controller('parking-history')
 @ApiTags('ParkingHistories')
 @UseGuards(AuthGuard)
 export class ParkingHistoryController {
-  constructor(private readonly parkingHistoryService: ParkingHistoryService) {}
+  constructor(
+    private readonly parkingHistoryService: ParkingHistoryService,
+    private readonly slotBookingService: SlotBookingsService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post('check-in')
@@ -37,10 +41,6 @@ export class ParkingHistoryController {
       status: 'parking',
       check_out_time: null,
     } as ParkingHistoryEntity;
-
-    // check trong slot booking xem có book ko
-    // nếu có booking thì thay slot id bên booking qua dto
-    // ko thì pass
 
     // thêm vào db
     const result = await this.parkingHistoryService.create(checkIn);
