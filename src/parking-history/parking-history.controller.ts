@@ -19,7 +19,7 @@ import {
   UpdateParkingHistoryDto,
 } from './dtos/parking-history.request.dto';
 import { ParkingHistoryEntity } from './entities/parking-history.entity';
-import { SlotBookingsService } from 'src/slot-bookings/slot-bookings.service';
+import { BillsService } from 'src/bills/bills.service';
 
 @Controller('parking-history')
 @ApiTags('ParkingHistories')
@@ -27,7 +27,7 @@ import { SlotBookingsService } from 'src/slot-bookings/slot-bookings.service';
 export class ParkingHistoryController {
   constructor(
     private readonly parkingHistoryService: ParkingHistoryService,
-    private readonly slotBookingService: SlotBookingsService,
+    private readonly billService: BillsService,
   ) {}
 
   @HttpCode(HttpStatus.CREATED)
@@ -51,7 +51,11 @@ export class ParkingHistoryController {
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER, UserRoleEnum.EMPLOYEE)
   async checkOut(@Body() checkOutDto: UpdateParkingHistoryDto) {
-    // check xem bill đã được cập nhật là đã thanh toán chưa
+    // cập nhật bill đã được thanh toán
+    const result = await this.billService.findOneAndUpdate(
+      { _id: checkOutDto.bill_id },
+      { is_paid: true },
+    );
 
     // cập nhật trạng thái và thời gian checkout của ticket
     const ticket = await this.parkingHistoryService.findOneAndUpdate(

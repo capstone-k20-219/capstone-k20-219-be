@@ -14,6 +14,7 @@ import { ServicesModule } from './services/services.module';
 import { ParkingHistoryModule } from './parking-history/parking-history.module';
 import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
 import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
+import { BillsModule } from './bills/bills.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
     ParkingHistoryModule,
     ServiceBookingsModule,
     SlotBookingsModule,
+    BillsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,13 +6,14 @@ import {
   ParkingHistoryEntity,
   ParkingHistorySchema,
 } from './entities/parking-history.entity';
-import { SlotBookingsModule } from 'src/slot-bookings/slot-bookings.module';
+import { BillsModule } from 'src/bills/bills.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: ParkingHistoryEntity.name, schema: ParkingHistorySchema },
     ]),
+    BillsModule,
   ],
   controllers: [ParkingHistoryController],
   providers: [ParkingHistoryService],
