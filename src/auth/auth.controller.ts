@@ -23,7 +23,7 @@ export class AuthController {
 
   @Post('refreshToken')
   refreshToken(@Req() req): Promise<{ access_token: string }> {
-    const { _id } = req.body;
-    return this.authService.generateJWT(_id);
+    const { id } = req.body;
+    return this.authService.generateJWT(id);
   }
 }

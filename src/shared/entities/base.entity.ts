@@ -1,13 +1,16 @@
-import { Prop } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export class BaseEntity extends Document {
-  @Prop()
+export class Base extends BaseEntity {
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   createdAt: Date;
 
-  @Prop()
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   updatedAt: Date;
-
-  @Prop()
-  deletedAt: Date;
 }

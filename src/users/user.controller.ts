@@ -21,13 +21,14 @@ import {
   UpdateUserRequestDto,
 } from './dtos/user.request.dto';
 import * as bcrypt from 'bcrypt';
-import { UserEntity } from './entities/user.entity';
-import { UserService } from './user.service';
+import { User } from './entities/user.entity';
+import { UsersService } from './user.service';
 import { UserRoleEnum } from './enums/user-role.enum';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/decorators/public.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { idGenerator } from 'src/shared/helpers/idGenerator';
 
 @Controller('users')
 @ApiTags('User')
@@ -36,14 +37,14 @@ export class UserController {
   logger: Logger;
   private readonly salt = 10;
 
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UsersService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
   @Public()
   async create(@Body() user: CreateUserRequestDto) {
     const isDuplicate = await this.userService.findOne({
-      email: user.email,
+      where: { email: user.email },
     });
 
     // This to solve the case of provider login => cannot identify newly created account or old
@@ -53,37 +54,47 @@ export class UserController {
 
     // Hash password and insert into database
     const hashedPassword = await bcrypt.hash(user.password, this.salt);
+    const number = await this.userService.count();
     const newUser = {
       ...user,
+      id: idGenerator(8, number + 1),
       password: hashedPassword,
-    } as UserEntity;
+      role: user.role.map((item) => {
+        return { role: item };
+      }),
+    };
 
-    return this.userService.create(newUser);
+    return await this.userService.create(newUser);
   }
 
   @Get()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.USER)
-  async find(@Req() request: Request): Promise<UserEntity> {
-    const _id = request['user']._id;
-    return await this.userService.findOne({ _id: _id });
+  async find(@Req() request: Request): Promise<User> {
+    const { id } = request['user'];
+    return await this.userService.getById(id);
   }
 
   @Get('all')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async findAll(): Promise<UserEntity[]> {
-    const users = await this.userService.findAll();
-    return users;
+  async findAll(): Promise<User[]> {
+    const users = await this.userService.find({ relations: { role: true } });
+    const result = [];
+    for (const user of users) {
+      result.push({
+        ...user,
+        role: user.role.map((item) => item.role),
+      });
+    }
+    return result;
   }
 
   @Get('findByQuery')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async findOneByQuery(
-    @Query() filter: GetUserRequestDto,
-  ): Promise<UserEntity> {
-    const user = await this.userService.findOne(filter);
+  async findOneByQuery(@Query() filter: GetUserRequestDto): Promise<User> {
+    const user = await this.userService.findOne({ where: filter });
     return user;
   }
 
@@ -94,41 +105,49 @@ export class UserController {
     @Req() request: Request,
     @Body() updateUserDto: UpdateUserRequestDto,
   ) {
-    const _id = request['user']._id;
-    const user = await this.userService.findOne({ _id: _id });
+    const { id } = request['user'];
+    const user = await this.userService.getById(id);
 
-    const hashedPassword = await bcrypt.hash(updateUserDto.password, this.salt);
     const updateUser = {
       ...updateUserDto,
-      password: hashedPassword,
       role: user.role,
-    } as UserEntity;
+    } as User;
 
-    const result = await this.userService.findOneAndUpdate(
-      { _id: _id },
-      updateUser,
-    );
+    if (updateUserDto.password) {
+      const hashedPassword = await bcrypt.hash(
+        updateUserDto.password,
+        this.salt,
+      );
+      updateUser.password = hashedPassword;
+    }
+
+    const result = await this.userService.update(id, updateUser);
 
     return result;
   }
 
-  @Put(':_id')
+  @Put(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
   async updateForManager(
-    @Param('_id') _id: string,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserRequestDto,
   ) {
-    const hashedPassword = await bcrypt.hash(updateUserDto.password, this.salt);
     const updateUser = {
       ...updateUserDto,
-      password: hashedPassword,
-    } as UserEntity;
+      role: updateUserDto.role.map((item) => {
+        return { role: item };
+      }),
+    };
+    if (updateUserDto.password) {
+      const hashedPassword = await bcrypt.hash(
+        updateUserDto.password,
+        this.salt,
+      );
+      updateUser.password = hashedPassword;
+    }
 
-    const result = await this.userService.findOneAndUpdate(
-      { _id: _id },
-      updateUser,
-    );
+    const result = await this.userService.update(id, updateUser);
 
     return result;
   }
@@ -137,10 +156,8 @@ export class UserController {
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.USER)
   async delete(@Req() request: Request) {
-    const _id = request['user']._id;
-    const result = await this.userService.removeByConditions({
-      _id: _id,
-    });
+    const { id } = request['user'];
+    const result = await this.userService.remove(id);
     return result;
   }
 }

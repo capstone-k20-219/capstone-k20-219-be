@@ -5,15 +5,7 @@ import { UserRoleEnum } from '../enums/user-role.enum';
 export class GetUserRequestDto {
   @ApiProperty()
   @IsString()
-  _id?: string;
-
-  @ApiProperty()
-  @IsEmail()
-  email?: string;
-
-  @ApiProperty()
-  @IsEnum(UserRoleEnum, { each: true })
-  role: UserRoleEnum;
+  id?: string;
 }
 
 export class CreateUserRequestDto {
@@ -30,7 +22,7 @@ export class CreateUserRequestDto {
   name: string;
 
   @ApiProperty()
-  @IsDate()
+  // @IsDate()
   dob: Date;
 
   @ApiProperty()
@@ -43,7 +35,7 @@ export class CreateUserRequestDto {
 
   @ApiProperty()
   @IsArray()
-  bank_account: BankAccountDto[];
+  bankAccount: BankAccountDto[];
 
   @ApiProperty()
   @IsArray()
@@ -54,11 +46,13 @@ export class CreateUserRequestDto {
 export class BankAccountDto {
   @ApiProperty()
   @IsString()
-  account_no: string;
+  accountNo: string;
 
   @ApiProperty()
   @IsString()
   bank: string;
 }
 
-export class UpdateUserRequestDto extends PartialType(CreateUserRequestDto) {}
+export class UpdateUserRequestDto extends PartialType(CreateUserRequestDto) {
+  id: string;
+}

@@ -1,101 +1,76 @@
 import { Injectable } from '@nestjs/common';
-import { Document, FilterQuery, Model } from 'mongoose';
+import {
+  DeepPartial,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+import { Base } from '../entities/base.entity';
 import { IBaseService } from '../interfaces/base.interface';
 
 @Injectable()
-export abstract class BaseService<T extends Document>
-  implements IBaseService<T>
-{
-  private readonly modelName: string;
-
-  constructor(private readonly model: Model<T>) {
-    for (const modelName of Object.keys(model.collection.conn.models)) {
-      if (model.collection.conn.models[modelName] === this.model) {
-        this.modelName = modelName;
-        break;
-      }
-    }
-  }
+export abstract class BaseService<T extends Base> implements IBaseService<T> {
+  constructor(
+    private readonly repository: Repository<T>,
+    private readonly modelName: string,
+  ) {}
 
   async create(dto: Partial<Record<keyof T, unknown>>): Promise<T | null> {
-    const newObj = await this.model.create({ ...dto });
-
-    if (!newObj) {
+    const newObj = this.repository.create({ ...dto } as DeepPartial<T>);
+    const insertObj = this.repository.save(newObj);
+    if (!insertObj) {
       throw Error(`Cannot create new ${this.modelName}`);
     }
-    return newObj;
+    return insertObj;
   }
 
   async update(
-    id: string,
+    id: number | string,
     updateDto: Partial<Record<keyof T, unknown>>,
-  ): Promise<boolean> {
-    const updateObject = await this.model.updateOne(
-      { _id: id },
-      { $set: updateDto },
-    );
-    return updateObject.acknowledged;
+  ) {
+    const updateObj = await this.repository.findOneBy({ id: id } as any);
+    Object.assign(updateObj, updateDto);
+    const result = await this.repository.save(updateObj);
+    return result != null;
   }
 
   async findAll(): Promise<T[] | null> {
-    const objects = await this.model.find().exec();
+    const objects = await this.repository.find();
     return objects;
   }
 
-  async find(conditions: Partial<Record<keyof T, unknown>>): Promise<T[]> {
-    const test = conditions as FilterQuery<T>;
-    return await this.model.find(conditions as FilterQuery<T>).exec();
+  async find(conditions: any): Promise<T[] | null> {
+    return await this.repository.find(conditions as FindManyOptions<T>);
   }
 
-  async findOne(
-    conditions: Partial<Record<keyof T, unknown>>,
-  ): Promise<T | null> {
-    const object = await this.model.findOne(conditions as FilterQuery<T>);
-    return object;
+  async findOne(conditions: any): Promise<T> {
+    return await this.repository.findOne(conditions as FindOneOptions<T>);
   }
 
-  async getById(id: string): Promise<T | null> {
-    return await this.model.findOne({ _id: id }).exec();
+  async getById(id: string | number): Promise<T> {
+    return await this.repository.findOneBy({ id: id } as any);
   }
 
-  async getByIds(ids: string[]): Promise<T[] | null> {
-    return await this.model.find({ _id: { $in: ids } }).exec();
+  async remove(id: number | string): Promise<boolean> {
+    const deletedObj = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where('id=:id', { id })
+      .execute();
+
+    return deletedObj.affected > 0;
   }
 
-  async updateByCode(
-    code: string,
-    updateDto: Partial<Record<keyof T, unknown>>,
-  ): Promise<boolean> {
-    const updateObject = await this.model.replaceOne({ code: code }, updateDto);
-    return updateObject.acknowledged;
-  }
-
-  async findOneAndUpdate(
-    filters: Partial<Record<keyof T, unknown>>,
-    updateDto: Partial<Record<keyof T, unknown>>,
-  ): Promise<T | null> {
-    const updatedObject = await this.model.findOneAndUpdate(
-      filters as FilterQuery<T>,
-      { $set: updateDto },
-      {
-        new: true,
-      },
+  async removeByConditions(conditions: any): Promise<boolean> {
+    const deletedObj = await this.repository.delete(
+      conditions as FindOptionsWhere<T>,
     );
-    return updatedObject;
+    return deletedObj.affected > 0;
   }
 
-  async remove(id: string): Promise<boolean> {
-    const object = await this.model.findOne({ _id: id }).exec();
-    const deletedObject = await this.model.deleteOne({ _id: id });
-    return deletedObject.deletedCount > 0;
-  }
-
-  async removeByConditions(
-    conditions: Partial<Record<keyof T, unknown>>,
-  ): Promise<boolean> {
-    const deletedObject = await this.model.deleteMany(
-      conditions as FilterQuery<T>,
-    );
-    return deletedObject.deletedCount > 0;
+  async count(): Promise<number> {
+    const result = await this.repository.count();
+    return result;
   }
 }

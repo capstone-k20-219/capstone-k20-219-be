@@ -1,37 +1,79 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BaseEntity } from 'src/shared/entities/base.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  PrimaryColumn,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { Base } from 'src/shared/entities/base.entity';
 import { UserRoleEnum } from '../enums/user-role.enum';
 
-@Schema({ collection: 'Users', timestamps: true })
-export class UserEntity extends BaseEntity {
-  @Prop()
+@Entity('user')
+export class User extends Base {
+  @PrimaryColumn()
+  id: string;
+
+  @Column({ length: 45, nullable: false })
   email: string;
 
-  @Prop()
+  @Column({ type: 'text', nullable: false })
   password: string;
 
-  @Prop()
+  @Column({ length: 45, nullable: false })
   name: string;
 
-  @Prop()
+  @Column()
   dob: Date;
 
-  @Prop()
+  @Column()
   phone: string;
 
-  @Prop()
+  @Column()
   image: string;
 
-  @Prop()
-  bank_account: IBankAccount[];
+  @OneToMany(() => BankAccount, (bankAccount) => bankAccount.user, {
+    cascade: true,
+  })
+  bankAccount: BankAccount[];
 
-  @Prop()
-  role: UserRoleEnum[];
+  @OneToMany(() => UserRole, (role) => role.user, { cascade: true })
+  role: UserRole[];
 }
 
-export class IBankAccount {
-  account_no: string;
+@Entity('bank_account')
+export class BankAccount extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  accountNo: string;
+
+  @Column()
   bank: string;
+
+  @ManyToOne(() => User, (user) => user.bankAccount, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }
 
-export const UserSchema = SchemaFactory.createForClass(UserEntity);
+@Entity('user_role')
+export class UserRole extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'enum', enum: UserRoleEnum })
+  role: UserRoleEnum;
+
+  @ManyToOne(() => User, (user) => user.role, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+}
