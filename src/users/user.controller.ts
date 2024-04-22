@@ -29,6 +29,7 @@ import { Public } from 'src/decorators/public.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { take } from 'rxjs';
 
 @Controller('users')
 @ApiTags('User')
@@ -49,15 +50,21 @@ export class UserController {
 
     // This to solve the case of provider login => cannot identify newly created account or old
     if (isDuplicate) {
-      throw new BadRequestException('username_existed');
+      throw new BadRequestException('email_existed');
     }
 
     // Hash password and insert into database
     const hashedPassword = await bcrypt.hash(user.password, this.salt);
-    const number = await this.userService.count();
+    const latest = await this.userService.find({
+      skip: 0,
+      take: 0,
+      order: { createdAt: 'DESC' },
+    });
+    let number = 1;
+    if (latest.length) number = Number(latest[0].id) + 1;
     const newUser = {
       ...user,
-      id: idGenerator(8, number + 1),
+      id: idGenerator(8, number),
       password: hashedPassword,
       role: user.role.map((item) => {
         return { role: item };

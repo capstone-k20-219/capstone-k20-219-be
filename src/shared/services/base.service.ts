@@ -35,6 +35,18 @@ export abstract class BaseService<T extends Base> implements IBaseService<T> {
     return result != null;
   }
 
+  async findOneAndUpdate(
+    conditions: any,
+    updateDto: Partial<Record<keyof T, unknown>>,
+  ) {
+    const updateObj = await this.repository.findOne(
+      conditions as FindOneOptions<T>,
+    );
+    Object.assign(updateObj, updateDto);
+    const result = await this.repository.save(updateObj);
+    return result != null;
+  }
+
   async findAll(): Promise<T[] | null> {
     const objects = await this.repository.find();
     return objects;

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Base } from 'src/shared/entities/base.entity';
 import { UserRoleEnum } from '../enums/user-role.enum';
+import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 
 @Entity('user')
 export class User extends Base {
@@ -41,6 +42,9 @@ export class User extends Base {
 
   @OneToMany(() => UserRole, (role) => role.user, { cascade: true })
   role: UserRole[];
+
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.user, { cascade: true })
+  vehicles: Vehicle[];
 }
 
 @Entity('bank_account')
@@ -57,6 +61,7 @@ export class BankAccount extends BaseEntity {
   @ManyToOne(() => User, (user) => user.bankAccount, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   @JoinColumn({ name: 'userId' })
   user: User;
@@ -73,6 +78,7 @@ export class UserRole extends BaseEntity {
   @ManyToOne(() => User, (user) => user.role, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   @JoinColumn({ name: 'userId' })
   user: User;
