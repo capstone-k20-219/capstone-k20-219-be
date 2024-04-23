@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Base } from 'src/shared/entities/base.entity';
 import { VehicleType } from 'src/vehicle-types/entities/vehicle-type.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 
 @Entity('service')
 export class Service extends Base {
@@ -21,6 +22,9 @@ export class Service extends Base {
 
   @OneToMany(() => ServicePrice, (price) => price.service, { cascade: true })
   prices: ServicePrice[];
+
+  @OneToMany(() => Comment, (comment) => comment.service)
+  comments: Comment[];
 }
 
 @Entity('service_price')

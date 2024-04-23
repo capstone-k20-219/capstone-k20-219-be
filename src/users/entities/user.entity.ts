@@ -11,6 +11,7 @@ import {
 import { Base } from 'src/shared/entities/base.entity';
 import { UserRoleEnum } from '../enums/user-role.enum';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 
 @Entity('user')
 export class User extends Base {
@@ -45,6 +46,9 @@ export class User extends Base {
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user, { cascade: true })
   vehicles: Vehicle[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }
 
 @Entity('bank_account')
