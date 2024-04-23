@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
 // import { CommentsModule } from './comments/comments.module';
-// import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
+import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
 // import { ServicesModule } from './services/services.module';
 // import { ParkingHistoryModule } from './parking-history/parking-history.module';
 // import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
@@ -35,7 +35,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     VehiclesModule,
     VehicleTypesModule,
     // CommentsModule,
-    // ParkingSlotsModule,
+    ParkingSlotsModule,
     // ServicesModule,
     // ParkingHistoryModule,
     // ServiceBookingsModule,
