@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Base } from 'src/shared/entities/base.entity';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { ParkingSlot } from 'src/parking-slots/entities/parking-slot.entity';
+import { ServicePrice } from 'src/services/entities/service.entity';
 
 @Entity('vehicle_type')
 export class VehicleType extends Base {
@@ -11,10 +12,10 @@ export class VehicleType extends Base {
   @Column()
   name: string;
 
-  @Column({ default: 0 })
+  @Column({ type: 'real', default: 0 })
   parkingFee: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'real', default: 0 })
   slotBookingFee: number;
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.type)
@@ -22,4 +23,7 @@ export class VehicleType extends Base {
 
   @OneToMany(() => ParkingSlot, (slot) => slot.type)
   slots: ParkingSlot[];
+
+  @OneToMany(() => ServicePrice, (price) => price.type)
+  prices: ServicePrice[];
 }
