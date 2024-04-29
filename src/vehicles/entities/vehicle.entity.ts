@@ -3,11 +3,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Base } from 'src/shared/entities/base.entity';
 import { User } from 'src/users/entities/user.entity';
 import { VehicleType } from 'src/vehicle-types/entities/vehicle-type.entity';
+import { SlotBooking } from 'src/slot-bookings/entities/slot-booking.entity';
 
 @Entity('vehicle')
 export class Vehicle extends Base {
@@ -40,4 +42,7 @@ export class Vehicle extends Base {
   })
   @JoinColumn({ name: 'typeId' })
   type: VehicleType;
+
+  @OneToMany(() => SlotBooking, (slotBooking) => slotBooking.vehicle)
+  slotBookings: SlotBooking[];
 }

@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ParkingSlotsService } from './parking-slots.service';
@@ -22,7 +23,7 @@ import {
   GetParkingSlotDto,
   UpdateParkingSlotDto,
 } from './dtos/parking-slot.dto';
-import { ParkingSlot } from './entities/parking-slot.entity';
+import { Response } from 'express';
 
 @Controller('parking-slots')
 @ApiTags('Parking slots')
@@ -34,49 +35,73 @@ export class ParkingSlotsController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async create(@Body() parkingSlot: CreateParkingSlotDto) {
-    const isDuplicate = await this.parkingSlotsService.getById(parkingSlot.id);
-    if (isDuplicate) {
-      throw new BadRequestException('code_existed');
+  async create(
+    @Body() parkingSlot: CreateParkingSlotDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const isDuplicate = await this.parkingSlotsService.getById(
+        parkingSlot.id,
+      );
+      if (isDuplicate) {
+        return res.status(400).send('code_existed');
+      }
+      const result = await this.parkingSlotsService.create(parkingSlot);
+      return res.status(201).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
     }
-    return await this.parkingSlotsService.create(parkingSlot);
   }
 
   @Get('filter')
-  async findByFilter(
-    @Query() filter: GetParkingSlotDto,
-  ): Promise<ParkingSlot[]> {
-    return await this.parkingSlotsService.find({
-      select: {
-        id: true,
-        x_start: true,
-        x_end: true,
-        y_start: true,
-        y_end: true,
-        typeId: true,
-        type: { name: true },
-      },
-      where: filter,
-      relations: { type: true },
-    });
+  async findByFilter(@Query() filter: GetParkingSlotDto, @Res() res: Response) {
+    try {
+      const result = await this.parkingSlotsService.find({
+        select: {
+          id: true,
+          x_start: true,
+          x_end: true,
+          y_start: true,
+          y_end: true,
+          typeId: true,
+          type: { name: true },
+        },
+        where: filter,
+        relations: { type: true },
+      });
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Put()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async update(@Body() updateParkingSlotDto: UpdateParkingSlotDto) {
-    const result = await this.parkingSlotsService.update(
-      updateParkingSlotDto.id,
-      updateParkingSlotDto,
-    );
-    return result;
+  async update(
+    @Body() updateParkingSlotDto: UpdateParkingSlotDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.parkingSlotsService.update(
+        updateParkingSlotDto.id,
+        updateParkingSlotDto,
+      );
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async delete(@Param('id') id: string) {
-    const result = await this.parkingSlotsService.remove(id);
-    return result;
+  async delete(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const result = await this.parkingSlotsService.remove(id);
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 }

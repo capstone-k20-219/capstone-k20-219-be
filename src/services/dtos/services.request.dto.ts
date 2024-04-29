@@ -9,11 +9,11 @@ import {
 } from 'class-validator';
 
 export class GetServiceDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   id?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   typeId?: string;
 }

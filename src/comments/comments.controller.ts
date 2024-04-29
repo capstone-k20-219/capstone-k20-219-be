@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Req,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateCommentDto } from './dtos/comments.dto';
 import { Comment } from './entities/comment.entity';
 import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { Response } from 'express';
 
 @Controller('comments')
 @ApiTags('Comments')
@@ -26,49 +28,71 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  async create(@Req() request: Request, @Body() comment: CreateCommentDto) {
-    const { id: userId } = request['user'];
-    const latest = await this.commentsService.find({
-      skip: 0,
-      take: 0,
-      order: { createdAt: 'DESC' },
-    });
-    let number = 1;
-    if (latest.length) number = Number(latest[0].id.substring(2)) + 1;
-    const newComment = {
-      id: idGenerator(20, number, 'CM'),
-      userId,
-      ...comment,
-    };
-    return await this.commentsService.create(newComment);
+  async create(
+    @Req() request: Request,
+    @Body() comment: CreateCommentDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const { id: userId } = request['user'];
+      const latest = await this.commentsService.find({
+        skip: 0,
+        take: 1,
+        order: { createdAt: 'DESC' },
+      });
+      let number = 1;
+      if (latest.length) number = Number(latest[0].id.substring(2)) + 1;
+      const newComment = {
+        id: idGenerator(20, number, 'CM'),
+        userId,
+        ...comment,
+      };
+      const result = await this.commentsService.create(newComment);
+      return res.status(201).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Get('/service/:id')
-  async getByService(@Param('id') serviceId: string): Promise<Comment[]> {
-    return await this.commentsService.find({
-      select: {
-        createdAt: true,
-        id: true,
-        content: true,
-        rating: true,
-        user: { id: true, name: true, image: true },
-      },
-      where: { serviceId: serviceId },
-      relations: { user: true },
-    });
+  async getByService(@Param('id') serviceId: string, @Res() res: Response) {
+    try {
+      const result = await this.commentsService.find({
+        select: {
+          createdAt: true,
+          id: true,
+          content: true,
+          rating: true,
+          user: { id: true, name: true, image: true },
+        },
+        where: { serviceId: serviceId },
+        relations: { user: true },
+      });
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Delete(':id')
-  async deleteUserComment(@Req() request: Request, @Param('id') id: string) {
-    const user = request['user'];
-    const comment = await this.commentsService.getById(id);
-    if (!comment) {
-      throw new BadRequestException('comment_not_exist');
+  async deleteUserComment(
+    @Req() request: Request,
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const user = request['user'];
+      const comment = await this.commentsService.getById(id);
+      if (!comment) {
+        res.status(400).send('comment_not_exist');
+      }
+      if (!user.roles.includes('manager') && comment.userId != user.id) {
+        res.status(401).send('Unauthorized');
+      }
+      const result = await this.commentsService.remove(id);
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
     }
-    if (!user.roles.includes('manager') && comment.userId != user.id) {
-      throw new UnauthorizedException();
-    }
-    const result = await this.commentsService.remove(id);
-    return result;
   }
 }

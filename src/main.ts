@@ -11,7 +11,6 @@ async function bootstrap() {
     .setTitle('Pakislot - Back-end server')
     .setDescription('API server for Pakislot')
     .setVersion('1.0')
-    .addTag('pakislot-be')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

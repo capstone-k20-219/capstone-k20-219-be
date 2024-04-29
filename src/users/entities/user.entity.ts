@@ -12,6 +12,7 @@ import { Base } from 'src/shared/entities/base.entity';
 import { UserRoleEnum } from '../enums/user-role.enum';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { ParkingTicket } from 'src/parking-tickets/entities/parking-ticket.entity';
 
 @Entity('user')
 export class User extends Base {
@@ -49,6 +50,9 @@ export class User extends Base {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => ParkingTicket, (ticket) => ticket.user)
+  tickets: ParkingTicket[];
 }
 
 @Entity('bank_account')

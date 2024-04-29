@@ -1,10 +1,18 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsString, IsDate, IsEnum } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsString,
+  IsDate,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 import { UserRoleEnum } from '../enums/user-role.enum';
 
 export class GetUserRequestDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
+  @IsOptional()
   id?: string;
 }
 

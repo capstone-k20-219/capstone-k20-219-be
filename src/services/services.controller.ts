@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
@@ -21,8 +22,8 @@ import {
   GetServiceDto,
   UpdateServiceDto,
 } from './dtos/services.request.dto';
-import { Service } from './entities/service.entity';
 import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { Response } from 'express';
 
 @Controller('services')
 @ApiTags('Services')
@@ -34,64 +35,88 @@ export class ServicesController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async create(@Body() service: CreateServiceDto) {
-    const latest = await this.servicesService.find({
-      skip: 0,
-      take: 0,
-      order: { createdAt: 'DESC' },
-    });
-    let number = 1;
-    if (latest.length) number = Number(latest[0].id.substring(1)) + 1;
-    const newService = { ...service, id: idGenerator(3, number, 'S') };
-    return await this.servicesService.create(newService);
+  async create(@Body() service: CreateServiceDto, @Res() res: Response) {
+    try {
+      const latest = await this.servicesService.find({
+        skip: 0,
+        take: 1,
+        order: { createdAt: 'DESC' },
+      });
+      let number = 1;
+      if (latest.length) number = Number(latest[0].id.substring(1)) + 1;
+      const newService = { ...service, id: idGenerator(3, number, 'S') };
+      const result = await this.servicesService.create(newService);
+      return res.status(201).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Get('all')
-  async getAll(): Promise<Service[]> {
-    const result = await this.servicesService.find({
-      select: {
-        id: true,
-        name: true,
-        prices: { type: { id: true, name: true }, unitPrice: true },
-      },
-      relations: { prices: { type: true } },
-    });
-    return result;
+  async getAll(@Res() res: Response) {
+    try {
+      const result = await this.servicesService.find({
+        select: {
+          id: true,
+          name: true,
+          prices: { type: { id: true, name: true }, unitPrice: true },
+        },
+        relations: { prices: { type: true } },
+      });
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Get('filter')
-  async findByFilter(@Query() query: GetServiceDto): Promise<Service[]> {
-    const filter = {};
-    if (query.id) filter['id'] = query.id;
-    if (query.typeId) filter['prices'] = { typeId: query.typeId };
-    const result = await this.servicesService.find({
-      select: {
-        id: true,
-        name: true,
-        prices: { type: { id: true, name: true }, unitPrice: true },
-      },
-      relations: { prices: { type: true } },
-      where: filter,
-    });
-    return result;
+  async findByFilter(@Query() query: GetServiceDto, @Res() res: Response) {
+    try {
+      const filter = {};
+      if (query.id) filter['id'] = query.id;
+      if (query.typeId) filter['prices'] = { typeId: query.typeId };
+      const result = await this.servicesService.find({
+        select: {
+          id: true,
+          name: true,
+          prices: { type: { id: true, name: true }, unitPrice: true },
+        },
+        relations: { prices: { type: true } },
+        where: filter,
+      });
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Put()
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async update(@Body() updateServiceDto: UpdateServiceDto) {
-    const result = await this.servicesService.update(
-      updateServiceDto.id,
-      updateServiceDto,
-    );
-    return result;
+  async update(
+    @Body() updateServiceDto: UpdateServiceDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.servicesService.update(
+        updateServiceDto.id,
+        updateServiceDto,
+      );
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async delete(@Param('id') id: string) {
-    const result = await this.servicesService.remove(id);
-    return result;
+  async delete(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const result = await this.servicesService.remove(id);
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
 }

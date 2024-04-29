@@ -1,7 +1,12 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
-export class GetVehicleTypeRequestDto {}
+export class GetVehicleTypeRequestDto {
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  id?: string;
+}
 
 export class CreateVehicleTypeRequestDto {
   @ApiProperty()

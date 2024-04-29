@@ -11,6 +11,7 @@ import {
 import { Base } from 'src/shared/entities/base.entity';
 import { VehicleType } from 'src/vehicle-types/entities/vehicle-type.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { ServiceBooking } from 'src/service-bookings/entities/service-booking.entity';
 
 @Entity('service')
 export class Service extends Base {
@@ -25,6 +26,9 @@ export class Service extends Base {
 
   @OneToMany(() => Comment, (comment) => comment.service)
   comments: Comment[];
+
+  @OneToMany(() => ServiceBooking, (booking) => booking.service)
+  bookings: ServiceBooking[];
 }
 
 @Entity('service_price')

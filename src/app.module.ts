@@ -10,10 +10,9 @@ import { VehicleTypesModule } from './vehicle-types/vehicle-types.module';
 import { CommentsModule } from './comments/comments.module';
 import { ParkingSlotsModule } from './parking-slots/parking-slots.module';
 import { ServicesModule } from './services/services.module';
-// import { ParkingHistoryModule } from './parking-history/parking-history.module';
-// import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
-// import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
-// import { BillsModule } from './bills/bills.module';
+import { ParkingTicketsModule } from './parking-tickets/parking-tickets.module';
+import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
+import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -37,10 +36,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     CommentsModule,
     ParkingSlotsModule,
     ServicesModule,
-    // ParkingHistoryModule,
-    // ServiceBookingsModule,
-    // SlotBookingsModule,
-    // BillsModule,
+    ParkingTicketsModule,
+    ServiceBookingsModule,
+    SlotBookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
