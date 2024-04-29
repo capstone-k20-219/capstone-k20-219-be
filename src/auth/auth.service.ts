@@ -4,6 +4,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/user.service';
 import { JwtPayload } from './auth.interface';
 import * as bcrypt from 'bcrypt';
+import { UserRoleEnum } from 'src/users/enums/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,17 @@ export class AuthService {
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  checkPermission(userRoles: UserRoleEnum[], checkRoles: UserRoleEnum[]) {
+    let result = false;
+    for (const role of checkRoles) {
+      if (userRoles.includes(role)) {
+        result = true;
+        break;
+      }
+    }
+    return result;
   }
 
   private _generateJWT(payload: JwtPayload): { access_token: string } {
