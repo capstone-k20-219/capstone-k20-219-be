@@ -82,7 +82,16 @@ export class UserController {
   async find(@Req() request: Request, @Res() res: Response) {
     try {
       const { id } = request['user'];
-      const result = await this.userService.getById(id);
+      const user = (
+        await this.userService.find({
+          where: { id },
+          relations: { role: true, bankAccount: true },
+        })
+      )[0];
+      const result = {
+        ...user,
+        role: user.role.map((item) => item.role),
+      };
       res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
