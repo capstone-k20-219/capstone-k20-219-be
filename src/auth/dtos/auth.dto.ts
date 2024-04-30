@@ -26,3 +26,11 @@ export class CheckPermissionDto {
   @IsEnum(UserRoleEnum, { each: true })
   role: UserRoleEnum[];
 }
+
+export class RefreshTokenRequestDto {
+  @ApiProperty()
+  @IsString()
+  refresh_token: string;
+}
+
+export class LogOutDto extends RefreshTokenRequestDto {}

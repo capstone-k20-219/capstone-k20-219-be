@@ -8,7 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CheckPermissionDto, SignInDto } from './dtos/sign-in.dto';
+import {
+  CheckPermissionDto,
+  LogOutDto,
+  RefreshTokenRequestDto,
+  SignInDto,
+} from './dtos/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from './auth.guard';
 
@@ -34,8 +39,25 @@ export class AuthController {
   }
 
   @Post('refresh')
-  refreshToken(@Req() req): Promise<{ access_token: string }> {
-    const { id } = req.body;
-    return this.authService.generateJWT(id);
+  async refreshToken(
+    @Body() refreshTokenDto: RefreshTokenRequestDto,
+  ): Promise<{ access_token: string }> {
+    const { refresh_token } = refreshTokenDto;
+    return await this.authService.refresh(refresh_token);
+  }
+
+  @Post('/log-out')
+  @UseGuards(AuthGuard)
+  async logOut(@Req() req, @Body() logOutDto: LogOutDto) {
+    const { refresh_token } = logOutDto;
+    const { id } = req['user'];
+    return await this.authService.logOut(id, false, refresh_token);
+  }
+
+  @Post('/log-out/all')
+  @UseGuards(AuthGuard)
+  async logOutAll(@Req() req) {
+    const { id } = req['user'];
+    return await this.authService.logOut(id, true);
   }
 }

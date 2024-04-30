@@ -13,6 +13,7 @@ import { UserRoleEnum } from '../enums/user-role.enum';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { ParkingTicket } from 'src/parking-tickets/entities/parking-ticket.entity';
+import { UserRefreshToken } from 'src/auth/entities/user-refresh-token.entity';
 
 @Entity('user')
 export class User extends Base {
@@ -53,6 +54,9 @@ export class User extends Base {
 
   @OneToMany(() => ParkingTicket, (ticket) => ticket.user)
   tickets: ParkingTicket[];
+
+  @OneToMany(() => UserRefreshToken, (token) => token.user)
+  tokens: UserRefreshToken[];
 }
 
 @Entity('bank_account')
