@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,14 +8,12 @@ import {
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateCommentDto } from './dtos/comments.dto';
-import { Comment } from './entities/comment.entity';
 import { idGenerator } from 'src/shared/helpers/idGenerator';
 import { Response } from 'express';
 
@@ -87,7 +84,7 @@ export class CommentsController {
         res.status(400).send('comment_not_exist');
       }
       if (!user.roles.includes('manager') && comment.userId != user.id) {
-        res.status(401).send('Unauthorized');
+        res.status(403).send('Forbidden');
       }
       const result = await this.commentsService.remove(id);
       return res.status(200).send(result);

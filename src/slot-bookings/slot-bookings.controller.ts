@@ -40,7 +40,7 @@ export class SlotBookingsController {
       const { id: userId } = request['user'];
       const vehicle = await this.vehiclesService.getById(bookingDto.vehicleId);
       if (vehicle.userId != userId) {
-        return res.status(401).send('Unauthorized');
+        return res.status(403).send('Forbidden');
       }
 
       // check thời gian có nhiều hơn 24h và là một thời điểm trong tương lai ko
@@ -102,7 +102,7 @@ export class SlotBookingsController {
         relations: { vehicle: true },
       });
       if (booking.vehicle.userId != userId) {
-        return res.status(401).send('Unauthorized');
+        return res.status(403).send('Forbidden');
       }
       const result = await this.slotBookingsService.remove(id);
       return res.status(200).send(result);

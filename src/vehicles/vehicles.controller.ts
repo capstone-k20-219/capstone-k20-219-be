@@ -117,7 +117,7 @@ export class VehiclesController {
       }
 
       if (!user.roles.includes('manager') && user.id != vehicle.userId) {
-        return res.status(401).send('Unauthorized');
+        return res.status(403).send('Forbidden');
       }
 
       const result = await this.vehiclesService.update(
@@ -145,7 +145,7 @@ export class VehiclesController {
       }
 
       if (!user.roles.includes('manager') && user.id != vehicle.userId) {
-        return res.status(401).send('Unauthorized');
+        return res.status(403).send('Forbidden');
       }
 
       const result = await this.vehiclesService.remove(id);

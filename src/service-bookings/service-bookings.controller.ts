@@ -54,7 +54,7 @@ export class ServiceBookingsController {
       }
 
       if (ticket.userId != userId) {
-        return res.status(401).send('Unauthorized');
+        return res.status(403).send('Forbidden');
       }
 
       const bookingInfo = { ...bookingDto };
