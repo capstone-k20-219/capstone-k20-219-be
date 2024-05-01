@@ -77,8 +77,6 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.USER)
   async find(@Req() request: Request, @Res() res: Response) {
     try {
       const { id } = request['user'];
