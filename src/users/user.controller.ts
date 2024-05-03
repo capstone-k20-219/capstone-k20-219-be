@@ -118,12 +118,20 @@ export class UserController {
   @Get('findByQuery')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER)
-  async findOneByQuery(
-    @Query() filter: GetUserRequestDto,
-    @Res() res: Response,
-  ) {
+  async findByQuery(@Query() filter: GetUserRequestDto, @Res() res: Response) {
     try {
-      const user = await this.userService.findOne({ where: filter });
+      const cond = {};
+      if (Object.keys(filter).length) {
+        cond['where'] = {};
+      }
+      if (filter.id) {
+        cond['where']['id'] = filter.id;
+      }
+      if (filter.role) {
+        cond['where']['role'] = { role: filter.role };
+      }
+
+      const user = await this.userService.find(cond);
       res.status(200).send(user);
     } catch (err) {
       res.status(500).send(err.message);
