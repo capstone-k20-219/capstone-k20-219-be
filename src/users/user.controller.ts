@@ -203,11 +203,21 @@ export class UserController {
   }
 
   @Delete()
-  @UseGuards(RolesGuard)
-  @Roles(UserRoleEnum.USER)
   async delete(@Req() request: Request, @Res() res: Response) {
     try {
       const { id } = request['user'];
+      const result = await this.userService.remove(id);
+      res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  @Delete('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(UserRoleEnum.MANAGER)
+  async deleteForManager(@Param('id') id: string, @Res() res: Response) {
+    try {
       const result = await this.userService.remove(id);
       res.status(200).send(result);
     } catch (err) {
