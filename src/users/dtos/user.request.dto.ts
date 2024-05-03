@@ -16,7 +16,7 @@ export class GetUserRequestDto {
   id?: string;
 
   @ApiProperty({ required: false })
-  @IsString()
+  @IsEnum(UserRoleEnum, { each: true })
   @IsOptional()
   role?: string;
 }
