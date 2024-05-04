@@ -19,23 +19,19 @@ export class CreateParkingSlotDto {
 
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
-  x_start?: number;
+  x_start: number;
 
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
-  x_end?: number;
+  x_end: number;
 
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
-  y_start?: number;
+  y_start: number;
 
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
-  y_end?: number;
+  y_end: number;
 }
 
 export class UpsertParkingSlotDto {
