@@ -1,7 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
 
-export class GetParkingTicketDto {}
+export class GetParkingTicketDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  serviceId?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  fromDate?: Date;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  toDate?: Date;
+}
 
 export class CreateParkingTicketDto {
   @ApiProperty()

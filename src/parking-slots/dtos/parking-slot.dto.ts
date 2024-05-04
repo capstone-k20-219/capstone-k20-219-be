@@ -1,5 +1,11 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateParkingSlotDto {
   @ApiProperty()
@@ -30,6 +36,12 @@ export class CreateParkingSlotDto {
   @IsNumber()
   @IsOptional()
   y_end?: number;
+}
+
+export class UpsertParkingSlotDto {
+  @ApiProperty()
+  @IsArray()
+  slots: CreateParkingSlotDto[];
 }
 
 export class GetParkingSlotDto {

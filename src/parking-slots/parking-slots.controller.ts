@@ -21,6 +21,7 @@ import {
   CreateParkingSlotDto,
   GetParkingSlotDto,
   UpdateParkingSlotDto,
+  UpsertParkingSlotDto,
 } from './dtos/parking-slot.dto';
 import { Response } from 'express';
 
@@ -50,6 +51,28 @@ export class ParkingSlotsController {
     } catch (err) {
       res.status(500).send(err.message);
     }
+  }
+
+  @Post('/upsert')
+  @UseGuards(RolesGuard)
+  @Roles(UserRoleEnum.MANAGER)
+  async upsert(@Body() upsertDto: UpsertParkingSlotDto, @Res() res: Response) {
+    // delete the redundant slots
+    const currentSlots = await this.parkingSlotsService.find({
+      select: ['id'],
+    });
+    const currentSlotsId = currentSlots.map((slot) => slot.id);
+    const deletedId = [];
+    const dtoIds = upsertDto.slots.map((item) => item.id);
+    for (const id of currentSlotsId) {
+      if (!dtoIds.includes(id)) deletedId.push(id);
+    }
+    if (deletedId.length)
+      await this.parkingSlotsService.removeByConditions(deletedId);
+
+    // upsert and return the result
+    await this.parkingSlotsService.upsert(upsertDto.slots);
+    res.status(200).send(true);
   }
 
   @Get('filter')

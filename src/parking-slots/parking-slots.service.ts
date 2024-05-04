@@ -12,4 +12,9 @@ export class ParkingSlotsService extends BaseService<ParkingSlot> {
   ) {
     super(_parkingSlotRepo, 'parking_slot');
   }
+
+  async upsert(slots: any) {
+    const upsertObj = await this._parkingSlotRepo.upsert(slots, ['id']);
+    return upsertObj;
+  }
 }

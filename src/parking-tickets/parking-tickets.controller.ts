@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -18,10 +19,18 @@ import { UserRoleEnum } from 'src/users/enums/user-role.enum';
 import {
   CheckOutDto,
   CreateParkingTicketDto,
+  GetParkingTicketDto,
   UpdateTicketPaidStatusDto,
 } from './dtos/parking-ticket.request.dto';
 import { SlotBookingsService } from 'src/slot-bookings/slot-bookings.service';
-import { IsNull, Like, MoreThanOrEqual, Not } from 'typeorm';
+import {
+  And,
+  IsNull,
+  LessThanOrEqual,
+  Like,
+  MoreThanOrEqual,
+  Not,
+} from 'typeorm';
 import { getDateString } from 'src/shared/helpers/getDateString';
 import { idGenerator } from 'src/shared/helpers/idGenerator';
 import { Response } from 'express';
@@ -195,20 +204,55 @@ export class ParkingTicketsController {
   }
 
   @Get('/history/my')
-  async getMyHistory(@Req() req: Request, @Res() res: Response) {
+  async getMyHistory(
+    @Req() req: Request,
+    @Query() filter: GetParkingTicketDto,
+    @Res() res: Response,
+  ) {
     try {
       const { id: userId } = req['user'];
-      const tickets = await this.ticketsService.find({
+      const cond = {
         select: [
-          'id AS ticketId',
+          'id',
           'plateNo',
-          'createdAt AS checkInTime',
+          'createdAt',
           'checkOutTime',
+          'slotId',
+          'parkingCost',
         ],
         where: { userId: userId, isPaid: true, checkOutTime: Not(IsNull()) },
-        relations: { slot: true, serviceBookings: { service: true } },
+        // relations: { serviceBookings: { service: true } },
+      };
+
+      const timeCond = [Not(IsNull())];
+      if (filter.fromDate) {
+        timeCond.push(MoreThanOrEqual(new Date(filter.fromDate)));
+      }
+      if (filter.toDate) {
+        timeCond.push(LessThanOrEqual(new Date(filter.toDate)));
+      }
+      cond['where']['checkOutTime'] = And(...timeCond);
+
+      const tickets = await this.ticketsService.find(cond);
+      const result = tickets.map((ticket) => {
+        return {
+          ticketId: ticket.id,
+          plateNo: ticket.plateNo,
+          checkInTime: ticket.createdAt,
+          checkOutTime: ticket.checkOutTime,
+          slotId: ticket.slotId,
+          parkingCost: ticket.parkingCost,
+          // services: ticket.serviceBookings.map((item) => {
+          //   return {
+          //     serviceId: item.serviceId,
+          //     name: item.service.name,
+          //     quantity: item.quantity,
+          //     cost: item.cost,
+          //   };
+          // }),
+        };
       });
-      return res.status(200).send(tickets);
+      return res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
     }
@@ -217,19 +261,56 @@ export class ParkingTicketsController {
   @Get('/history/all')
   @UseGuards(RolesGuard)
   @Roles(UserRoleEnum.MANAGER, UserRoleEnum.EMPLOYEE)
-  async getHistoryForEmployee(@Res() res: Response) {
+  async getHistoryForEmployee(
+    @Query() filter: GetParkingTicketDto,
+    @Res() res: Response,
+  ) {
     try {
-      const tickets = await this.ticketsService.find({
+      const cond = {
         select: [
-          'id AS ticketId',
+          'id',
           'plateNo',
-          'createdAt AS checkInTime',
+          'createdAt',
           'checkOutTime',
+          'slotId',
+          'parkingCost',
         ],
-        where: { isPaid: true, checkOutTime: Not(IsNull()) },
-        relations: { slot: true, serviceBookings: { service: true } },
+        where: { isPaid: true },
+        relations: { serviceBookings: { service: true } },
+      };
+
+      if (filter.serviceId) {
+        cond['where']['serviceBookings'] = { serviceId: filter.serviceId };
+      }
+      const timeCond = [Not(IsNull())];
+      if (filter.fromDate) {
+        timeCond.push(MoreThanOrEqual(new Date(filter.fromDate)));
+      }
+      if (filter.toDate) {
+        timeCond.push(LessThanOrEqual(new Date(filter.toDate)));
+      }
+      cond['where']['checkOutTime'] = And(...timeCond);
+
+      const tickets = await this.ticketsService.find(cond);
+      const result = tickets.map((ticket) => {
+        return {
+          ticketId: ticket.id,
+          plateNo: ticket.plateNo,
+          checkInTime: ticket.createdAt,
+          checkOutTime: ticket.checkOutTime,
+          slotId: ticket.slotId,
+          parkingCost: ticket.parkingCost,
+          services: ticket.serviceBookings.map((item) => {
+            return {
+              serviceId: item.serviceId,
+              name: item.service.name,
+              quantity: item.quantity,
+              cost: item.cost,
+            };
+          }),
+        };
       });
-      return res.status(200).send(tickets);
+      return res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
     }
