@@ -168,7 +168,7 @@ export class ParkingTicketsController {
         services: ticket.serviceBookings.map((item) => {
           return {
             serviceId: item.serviceId,
-            service: item.service.name,
+            name: item.service.name,
             quantity: item.quantity,
             cost: item.cost,
           };
@@ -348,7 +348,7 @@ export class ParkingTicketsController {
         services: ticket.serviceBookings.map((booking) => {
           return {
             serviceId: booking.serviceId,
-            service: booking.service.name,
+            name: booking.service.name,
             quantity: booking.quantity,
             cost: booking.cost,
           };
