@@ -359,4 +359,49 @@ export class ParkingTicketsController {
       res.status(500).send(err.message);
     }
   }
+
+  @Get('/history/checkIn')
+  @UseGuards(RolesGuard)
+  @Roles(UserRoleEnum.MANAGER, UserRoleEnum.EMPLOYEE)
+  async getCheckInHistoryForEmployee(
+    @Query() filter: GetParkingTicketDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const cond = {
+        select: [
+          'id',
+          'plateNo',
+          'createdAt',
+          'checkOutTime',
+          'slotId',
+          'parkingCost',
+        ],
+      };
+
+      const timeCond = [];
+      if (filter.fromDate) {
+        timeCond.push(MoreThanOrEqual(new Date(filter.fromDate)));
+      }
+      if (filter.toDate) {
+        timeCond.push(LessThanOrEqual(new Date(filter.toDate)));
+      }
+      cond['where'] = { createdAt: And(...timeCond) };
+
+      const tickets = await this.ticketsService.find(cond);
+      const result = tickets.map((ticket) => {
+        return {
+          ticketId: ticket.id,
+          plateNo: ticket.plateNo,
+          checkInTime: ticket.createdAt,
+          checkOutTime: ticket.checkOutTime,
+          slotId: ticket.slotId,
+          parkingCost: ticket.parkingCost,
+        };
+      });
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
 }
