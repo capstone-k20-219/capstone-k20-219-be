@@ -95,7 +95,7 @@ export class VehiclesController {
         },
         where: filter,
         relations: { type: true },
-      })[0];
+      });
       return res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
