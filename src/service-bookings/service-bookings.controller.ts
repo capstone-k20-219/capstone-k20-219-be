@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,22 +8,21 @@ import {
   Put,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ServiceBookingsService } from './service-bookings.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import {
   CreateServiceBookingDto,
   UpdateServiceBookingDto,
 } from './dtos/service-booking.dto';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRoleEnum } from 'src/users/enums/user-role.enum';
-import { ParkingTicketsService } from 'src/parking-tickets/parking-tickets.service';
-import { ServicesService } from 'src/services/services.service';
-import { VehiclesService } from 'src/vehicles/vehicles.service';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRoleEnum } from '../users/enums/user-role.enum';
+import { ParkingTicketsService } from '../parking-tickets/parking-tickets.service';
+import { ServicesService } from '../services/services.service';
+import { VehiclesService } from '../vehicles/vehicles.service';
 import { Response } from 'express';
 
 @Controller('service-bookings')

@@ -3,9 +3,9 @@ import { SlotBookingsService } from './slot-bookings.service';
 import { SlotBookingsController } from './slot-bookings.controller';
 import { SlotBooking } from './entities/slot-booking.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VehiclesModule } from 'src/vehicles/vehicles.module';
-import { ParkingSlotsModule } from 'src/parking-slots/parking-slots.module';
-import { ParkingTicketsModule } from 'src/parking-tickets/parking-tickets.module';
+import { VehiclesModule } from '../vehicles/vehicles.module';
+import { ParkingSlotsModule } from '../parking-slots/parking-slots.module';
+import { ParkingTicketsModule } from '../parking-tickets/parking-tickets.module';
 
 @Module({
   imports: [

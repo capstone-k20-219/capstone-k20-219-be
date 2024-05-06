@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { CreateCommentDto } from './dtos/comments.dto';
-import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { idGenerator } from '../shared/helpers/idGenerator';
 import { Response } from 'express';
 
 @Controller('comments')

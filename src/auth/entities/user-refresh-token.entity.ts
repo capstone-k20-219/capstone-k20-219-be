@@ -1,5 +1,5 @@
-import { Base } from 'src/shared/entities/base.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

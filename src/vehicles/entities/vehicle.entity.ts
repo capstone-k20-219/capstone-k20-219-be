@@ -6,10 +6,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { User } from 'src/users/entities/user.entity';
-import { VehicleType } from 'src/vehicle-types/entities/vehicle-type.entity';
-import { SlotBooking } from 'src/slot-bookings/entities/slot-booking.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { User } from '../../users/entities/user.entity';
+import { VehicleType } from '../../vehicle-types/entities/vehicle-type.entity';
+import { SlotBooking } from '../../slot-bookings/entities/slot-booking.entity';
 
 @Entity('vehicle')
 export class Vehicle extends Base {

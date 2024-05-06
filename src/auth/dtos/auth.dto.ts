@@ -6,7 +6,7 @@ import {
   IsNotEmpty,
   IsString,
 } from 'class-validator';
-import { UserRoleEnum } from 'src/users/enums/user-role.enum';
+import { UserRoleEnum } from '../../users/enums/user-role.enum';
 
 export class SignInDto {
   @ApiProperty()

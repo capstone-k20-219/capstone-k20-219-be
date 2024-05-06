@@ -8,10 +8,10 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { VehicleType } from 'src/vehicle-types/entities/vehicle-type.entity';
-import { Comment } from 'src/comments/entities/comment.entity';
-import { ServiceBooking } from 'src/service-bookings/entities/service-booking.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { VehicleType } from '../../vehicle-types/entities/vehicle-type.entity';
+import { Comment } from '../../comments/entities/comment.entity';
+import { ServiceBooking } from '../../service-bookings/entities/service-booking.entity';
 
 @Entity('service')
 export class Service extends Base {

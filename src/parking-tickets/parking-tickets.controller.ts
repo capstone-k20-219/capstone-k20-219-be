@@ -12,17 +12,17 @@ import {
 } from '@nestjs/common';
 import { ParkingTicketsService } from './parking-tickets.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { UserRoleEnum } from 'src/users/enums/user-role.enum';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { UserRoleEnum } from '../users/enums/user-role.enum';
 import {
   CheckOutDto,
   CreateParkingTicketDto,
   GetParkingTicketDto,
   UpdateTicketPaidStatusDto,
 } from './dtos/parking-ticket.request.dto';
-import { SlotBookingsService } from 'src/slot-bookings/slot-bookings.service';
+import { SlotBookingsService } from '../slot-bookings/slot-bookings.service';
 import {
   And,
   IsNull,
@@ -31,10 +31,10 @@ import {
   MoreThanOrEqual,
   Not,
 } from 'typeorm';
-import { getDateString } from 'src/shared/helpers/getDateString';
-import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { getDateString } from '../shared/helpers/getDateString';
+import { idGenerator } from '../shared/helpers/idGenerator';
 import { Response } from 'express';
-import { VehicleTypesService } from 'src/vehicle-types/vehicle-types.service';
+import { VehicleTypesService } from '../vehicle-types/vehicle-types.service';
 
 @Controller('parking-tickets')
 @ApiTags('Parking tickets')

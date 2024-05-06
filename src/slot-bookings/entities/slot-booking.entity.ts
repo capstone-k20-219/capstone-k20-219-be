@@ -5,9 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { ParkingSlot } from 'src/parking-slots/entities/parking-slot.entity';
-import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { ParkingSlot } from '../../parking-slots/entities/parking-slot.entity';
+import { Vehicle } from '../../vehicles/entities/vehicle.entity';
 
 @Entity('slot_booking')
 export class SlotBooking extends Base {

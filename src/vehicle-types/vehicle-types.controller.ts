@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { VehicleTypesService } from './vehicle-types.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { UserRoleEnum } from 'src/users/enums/user-role.enum';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { UserRoleEnum } from '../users/enums/user-role.enum';
 import {
   CreateVehicleTypeRequestDto,
   GetVehicleTypeRequestDto,

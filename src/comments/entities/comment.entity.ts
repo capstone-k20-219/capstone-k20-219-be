@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Service } from 'src/services/entities/service.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { User } from '../../users/entities/user.entity';
+import { Service } from '../../services/entities/service.entity';
 
 @Entity('comment')
 export class Comment extends Base {

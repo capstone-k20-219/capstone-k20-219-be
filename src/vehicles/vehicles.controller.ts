@@ -14,15 +14,15 @@ import {
 } from '@nestjs/common';
 import { VehiclesService } from './vehicles.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import {
   CreateVehicleRequestDto,
   GetVehicleRequestDto,
   UpdateVehicleRequestDto,
 } from './dtos/vehicle.dto';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { UserRoleEnum } from 'src/users/enums/user-role.enum';
-import { Roles } from 'src/decorators/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRoleEnum } from '../users/enums/user-role.enum';
+import { Roles } from '../decorators/roles.decorator';
 import { Response } from 'express';
 
 @Controller('vehicles')

@@ -10,11 +10,11 @@ import {
 } from '@nestjs/common';
 import { SlotBookingsService } from './slot-bookings.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { CreateSlotBookingDto } from './dtos/slot-booking.dto';
-import { VehiclesService } from 'src/vehicles/vehicles.service';
-import { ParkingSlotsService } from 'src/parking-slots/parking-slots.service';
-import { ParkingTicketsService } from 'src/parking-tickets/parking-tickets.service';
+import { VehiclesService } from '../vehicles/vehicles.service';
+import { ParkingSlotsService } from '../parking-slots/parking-slots.service';
+import { ParkingTicketsService } from '../parking-tickets/parking-tickets.service';
 import { MoreThan } from 'typeorm';
 import { Response } from 'express';
 

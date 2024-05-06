@@ -8,12 +8,12 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
+import { Base } from '../../shared/entities/base.entity';
 import { UserRoleEnum } from '../enums/user-role.enum';
-import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
-import { Comment } from 'src/comments/entities/comment.entity';
-import { ParkingTicket } from 'src/parking-tickets/entities/parking-ticket.entity';
-import { UserRefreshToken } from 'src/auth/entities/user-refresh-token.entity';
+import { Vehicle } from '../../vehicles/entities/vehicle.entity';
+import { Comment } from '../../comments/entities/comment.entity';
+import { ParkingTicket } from '../../parking-tickets/entities/parking-ticket.entity';
+import { UserRefreshToken } from '../../auth/entities/user-refresh-token.entity';
 
 @Entity('user')
 export class User extends Base {

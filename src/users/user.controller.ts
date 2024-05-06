@@ -22,11 +22,11 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { UsersService } from './user.service';
 import { UserRoleEnum } from './enums/user-role.enum';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Public } from 'src/decorators/public.decorator';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { idGenerator } from 'src/shared/helpers/idGenerator';
+import { AuthGuard } from '../auth/auth.guard';
+import { Public } from '../decorators/public.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { idGenerator } from '../shared/helpers/idGenerator';
 import { Response } from 'express';
 
 @Controller('users')

@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
-import { ParkingSlot } from 'src/parking-slots/entities/parking-slot.entity';
-import { ServicePrice } from 'src/services/entities/service.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { Vehicle } from '../../vehicles/entities/vehicle.entity';
+import { ParkingSlot } from '../../parking-slots/entities/parking-slot.entity';
+import { ServicePrice } from '../../services/entities/service.entity';
 
 @Entity('vehicle_type')
 export class VehicleType extends Base {

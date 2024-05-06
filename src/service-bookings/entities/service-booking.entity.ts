@@ -5,9 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Base } from 'src/shared/entities/base.entity';
-import { ParkingTicket } from 'src/parking-tickets/entities/parking-ticket.entity';
-import { Service } from 'src/services/entities/service.entity';
+import { Base } from '../../shared/entities/base.entity';
+import { ParkingTicket } from '../../parking-tickets/entities/parking-ticket.entity';
+import { Service } from '../../services/entities/service.entity';
 
 @Entity('service_booking')
 export class ServiceBooking extends Base {
