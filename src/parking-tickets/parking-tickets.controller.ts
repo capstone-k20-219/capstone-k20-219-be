@@ -161,9 +161,10 @@ export class ParkingTicketsController {
       const invoice = {
         ticketId: ticket.id,
         plateNo: checkOutDto.plateNo,
-        parkingCost: parkingCost,
         checkInTime: ticket.createdAt,
         checkoutTime: checkOutTime,
+        slotId: ticket.slotId,
+        parkingCost: parkingCost,
         services: ticket.serviceBookings.map((item) => {
           return {
             serviceId: item.serviceId,
@@ -340,9 +341,10 @@ export class ParkingTicketsController {
       const result = {
         ticketId: ticket.id,
         plateNo: ticket.plateNo,
-        parkingCost: ticket.parkingCost,
         chcekInTime: ticket.createdAt,
         checkOutTime: ticket.checkOutTime,
+        slotId: ticket.slotId,
+        parkingCost: ticket.parkingCost,
         services: ticket.serviceBookings.map((booking) => {
           return {
             serviceId: booking.serviceId,
