@@ -24,6 +24,7 @@ import { ParkingTicketsService } from '../parking-tickets/parking-tickets.servic
 import { ServicesService } from '../services/services.service';
 import { VehiclesService } from '../vehicles/vehicles.service';
 import { Response } from 'express';
+import { IsNull } from 'typeorm';
 
 @Controller('service-bookings')
 @ApiTags('Service bookings')
@@ -77,7 +78,11 @@ export class ServiceBookingsController {
           createdAt: true,
           ticket: { id: true, slotId: true, plateNo: true },
         },
-        where: { serviceId: serviceId, isDone: false },
+        where: {
+          serviceId: serviceId,
+          isDone: false,
+          ticket: { checkOutTime: IsNull() },
+        },
         relations: { ticket: true },
       });
       return res.status(200).send(result);
