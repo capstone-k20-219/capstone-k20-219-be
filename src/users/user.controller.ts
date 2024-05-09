@@ -48,7 +48,7 @@ export class UserController {
 
       // This to solve the case of provider login => cannot identify newly created account or old
       if (isDuplicate) {
-        res.status(400).send('email_existed');
+        return res.status(400).send('email_existed');
       }
 
       // Hash password and insert into database
@@ -70,7 +70,7 @@ export class UserController {
       };
 
       const result = await this.userService.create(newUser);
-      res.status(201).send(result);
+      return res.status(201).send(result);
     } catch (err) {
       res.status(500).send(err.message);
     }

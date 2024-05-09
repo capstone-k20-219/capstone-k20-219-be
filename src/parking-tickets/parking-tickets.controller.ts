@@ -35,6 +35,8 @@ import { getDateString } from '../shared/helpers/getDateString';
 import { idGenerator } from '../shared/helpers/idGenerator';
 import { Response } from 'express';
 import { VehicleTypesService } from '../vehicle-types/vehicle-types.service';
+import { VehiclesService } from '../vehicles/vehicles.service';
+import { ParkingSlotsService } from '../parking-slots/parking-slots.service';
 
 @Controller('parking-tickets')
 @ApiTags('Parking tickets')
@@ -44,6 +46,8 @@ export class ParkingTicketsController {
     private readonly ticketsService: ParkingTicketsService,
     private readonly slotBookingsService: SlotBookingsService,
     private readonly vehicleTypesService: VehicleTypesService,
+    private readonly vehiclesService: VehiclesService,
+    private readonly slotsService: ParkingSlotsService,
   ) {}
 
   @Post('check-in')
@@ -54,6 +58,15 @@ export class ParkingTicketsController {
     @Res() res: Response,
   ) {
     try {
+      // check if car is registered
+      const vehicle = await this.vehiclesService.findOne({
+        select: ['id', 'userId', 'plateNo', 'typeId'],
+        where: { plateNo: checkInInfo.plateNo },
+      });
+      if (!vehicle) {
+        return res.status(400).send('vehicle not registered');
+      }
+
       // Check if car already reserved a slot
       const currentTime = new Date();
       const slotBooking = await this.slotBookingsService.findOne({
@@ -62,16 +75,53 @@ export class ParkingTicketsController {
           arrivalTime: MoreThanOrEqual(currentTime),
         },
       });
-      let slotId = checkInInfo.slotId;
-      if (slotBooking) slotId = slotBooking.slotId;
 
-      // check if slot is being occupied
-      const occupied = await this.ticketsService.find({
-        where: { slotId: slotId, checkOutTime: null },
-      });
-      if (occupied.length) {
-        return res.status(400).send('slot_occupied');
+      // assign slot
+      let slotId: string = '';
+      if (slotBooking) {
+        slotId = slotBooking.slotId;
+      } else {
+        const slots = await this.slotsService.find({
+          select: ['id'],
+          where: { typeId: vehicle.typeId },
+          order: { id: 'ASC' },
+        });
+        const occupiedSlots = await this.slotsService.find({
+          select: ['id'],
+          where: {
+            typeId: vehicle.typeId,
+            tickets: { checkOutTime: IsNull() },
+          },
+          order: { id: 'ASC' },
+        });
+        const bookedSlots = await this.slotsService.find({
+          select: ['id'],
+          where: {
+            typeId: vehicle.typeId,
+            bookings: { arrivalTime: MoreThanOrEqual(currentTime) },
+          },
+          order: { id: 'ASC' },
+        });
+        const unavailSlots = [...occupiedSlots, ...bookedSlots];
+        for (const slot of slots) {
+          if (!unavailSlots.includes(slot)) {
+            slotId = slot.id;
+            break;
+          }
+        }
+
+        if (slotId == '') {
+          return res.status(400).send('no available slot');
+        }
       }
+
+      // // check if slot is being occupied
+      // const occupied = await this.ticketsService.find({
+      //   where: { slotId: slotId, checkOutTime: null },
+      // });
+      // if (occupied.length) {
+      //   return res.status(400).send('slot_occupied');
+      // }
 
       // generate id
       let id = getDateString();
@@ -90,13 +140,13 @@ export class ParkingTicketsController {
         id: id,
         slotId: slotId,
         plateNo: checkInInfo.plateNo,
-        userId: checkInInfo.userId,
+        userId: vehicle.userId,
       };
       const result = await this.ticketsService.create(ticket);
 
       // send email to guest (?)
-      if (!checkInInfo.userId && checkInInfo.email) {
-      }
+      // if (!checkInInfo.userId && checkInInfo.email) {
+      // }
 
       return res.status(201).send(result);
     } catch (err) {

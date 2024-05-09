@@ -19,7 +19,8 @@ export class GetParkingTicketDto {
 export class CreateParkingTicketDto {
   @ApiProperty()
   @IsString()
-  slotId: string;
+  @IsOptional()
+  slotId?: string;
 
   @ApiProperty({ required: false })
   @IsString()
