@@ -67,6 +67,18 @@ export class ParkingTicketsController {
         return res.status(400).send('vehicle not registered');
       }
 
+      // check if car is checked in
+      const isParking = await this.ticketsService.findOne({
+        where: {
+          plateNo: vehicle.plateNo,
+          userId: vehicle.userId,
+          checkOutTime: IsNull(),
+        },
+      });
+      if (isParking) {
+        return res.status(400).send('vehicle already checked in');
+      }
+
       // Check if car already reserved a slot
       const currentTime = new Date();
       const slotBooking = await this.slotBookingsService.findOne({
