@@ -103,7 +103,7 @@ export class ParkingTicketsController {
           select: ['id'],
           where: {
             typeId: vehicle.typeId,
-            tickets: { checkOutTime: IsNull() },
+            tickets: { createdAt: Not(IsNull()), checkOutTime: IsNull() },
           },
           order: { id: 'ASC' },
         });
