@@ -86,6 +86,7 @@ export class ParkingTicketsController {
           where: { typeId: vehicle.typeId },
           order: { id: 'ASC' },
         });
+        const slotIds = slots.map((item) => item.id);
         const occupiedSlots = await this.slotsService.find({
           select: ['id'],
           where: {
@@ -102,10 +103,15 @@ export class ParkingTicketsController {
           },
           order: { id: 'ASC' },
         });
-        const unavailSlots = [...occupiedSlots, ...bookedSlots];
-        for (const slot of slots) {
-          if (!unavailSlots.includes(slot)) {
-            slotId = slot.id;
+        const unavailSlotIds = Array.from(
+          new Set([
+            ...occupiedSlots.map((item) => item.id),
+            ...bookedSlots.map((item) => item.id),
+          ]),
+        );
+        for (const id of slotIds) {
+          if (!unavailSlotIds.includes(id)) {
+            slotId = id;
             break;
           }
         }
