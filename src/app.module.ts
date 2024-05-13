@@ -26,7 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_SCHEMA,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     GlobalModule,
     UserModule,
