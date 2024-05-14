@@ -24,6 +24,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { UserRoleEnum } from '../users/enums/user-role.enum';
 import { Roles } from '../decorators/roles.decorator';
 import { Response } from 'express';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('vehicles')
 @ApiTags('Vehicles')
@@ -150,6 +151,30 @@ export class VehiclesController {
 
       const result = await this.vehiclesService.remove(id);
       return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  @Post('public/user/:userId')
+  @Public()
+  async createPublic(
+    @Param('userId') userId: string,
+    @Body() vehicle: CreateVehicleRequestDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const isDuplicate = await this.vehiclesService.findOne({
+        where: { plateNo: vehicle.plateNo },
+      });
+      if (isDuplicate) {
+        return res.status(400).send('vehicle_existed');
+      }
+      const result = await this.vehiclesService.create({
+        userId: userId,
+        ...vehicle,
+      });
+      return res.status(201).send(result);
     } catch (err) {
       res.status(500).send(err.message);
     }
