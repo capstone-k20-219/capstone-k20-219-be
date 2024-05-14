@@ -129,10 +129,7 @@ export class ParkingSlotsController {
   }
 
   @Get('allWithAvailStatus')
-  async getAllWithAvailStatus(
-    @Query() filter: GetParkingSlotDto,
-    @Res() res: Response,
-  ) {
+  async getAllWithAvailStatus(@Res() res: Response) {
     try {
       // get list of all slots
       const slots = await this.parkingSlotsService.find({
