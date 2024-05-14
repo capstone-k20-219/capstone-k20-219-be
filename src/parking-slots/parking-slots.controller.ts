@@ -170,7 +170,7 @@ export class ParkingSlotsController {
           y_start,
           y_end,
           type: type.name,
-          isAvailable: unavailSlotIds.includes(id),
+          isBusy: unavailSlotIds.includes(id),
         };
       });
 
