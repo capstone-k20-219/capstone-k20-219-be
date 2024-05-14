@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Req,
@@ -15,7 +16,7 @@ import { CreateSlotBookingDto } from './dtos/slot-booking.dto';
 import { VehiclesService } from '../vehicles/vehicles.service';
 import { ParkingSlotsService } from '../parking-slots/parking-slots.service';
 import { ParkingTicketsService } from '../parking-tickets/parking-tickets.service';
-import { MoreThan } from 'typeorm';
+import { MoreThan, MoreThanOrEqual } from 'typeorm';
 import { Response } from 'express';
 
 @Controller('slot-bookings')
@@ -106,6 +107,23 @@ export class SlotBookingsController {
       }
       const result = await this.slotBookingsService.remove(id);
       return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  @Get('my')
+  async getMyBooking(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { id: userId } = req['user'];
+      const currentTime = new Date();
+      const result = await this.slotBookingsService.find({
+        where: {
+          vehicle: { userId: userId },
+          arrivalTime: MoreThanOrEqual(currentTime),
+        },
+      });
+      res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
     }
