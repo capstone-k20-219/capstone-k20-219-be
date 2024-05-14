@@ -24,6 +24,7 @@ import {
   UpsertParkingSlotDto,
 } from './dtos/parking-slot.dto';
 import { Response } from 'express';
+import { IsNull, MoreThanOrEqual, Not } from 'typeorm';
 
 @Controller('parking-slots')
 @ApiTags('Parking slots')
@@ -121,6 +122,61 @@ export class ParkingSlotsController {
   async delete(@Param('id') id: string, @Res() res: Response) {
     try {
       const result = await this.parkingSlotsService.remove(id);
+      return res.status(200).send(result);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  @Get('allWithAvailStatus')
+  async getAllWithAvailStatus(
+    @Query() filter: GetParkingSlotDto,
+    @Res() res: Response,
+  ) {
+    try {
+      // get list of all slots
+      const slots = await this.parkingSlotsService.find({
+        relations: { type: true },
+      });
+
+      // get list of unavailable slots at the time of request
+      const currentTime = new Date();
+      const occupiedSlots = await this.parkingSlotsService.find({
+        select: ['id'],
+        where: {
+          tickets: { createdAt: Not(IsNull()), checkOutTime: IsNull() },
+        },
+        order: { id: 'ASC' },
+      });
+      const bookedSlots = await this.parkingSlotsService.find({
+        select: ['id'],
+        where: {
+          bookings: { arrivalTime: MoreThanOrEqual(currentTime) },
+        },
+        order: { id: 'ASC' },
+      });
+      const unavailSlotIds = Array.from(
+        new Set([
+          ...occupiedSlots.map((item) => item.id),
+          ...bookedSlots.map((item) => item.id),
+        ]),
+      );
+
+      // generate result
+      const result = slots.map((slot) => {
+        const { id, typeId, x_start, x_end, y_start, y_end, type } = slot;
+        return {
+          id,
+          typeId,
+          x_start,
+          x_end,
+          y_start,
+          y_end,
+          type: type.name,
+          isAvailable: unavailSlotIds.includes(id),
+        };
+      });
+
       return res.status(200).send(result);
     } catch (err) {
       res.status(500).send(err.message);
