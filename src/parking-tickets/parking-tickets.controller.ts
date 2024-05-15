@@ -135,7 +135,7 @@ export class ParkingTicketsController {
 
       // // check if slot is being occupied
       // const occupied = await this.ticketsService.find({
-      //   where: { slotId: slotId, checkOutTime: null },
+      //   where: { slotId: slotId, checkOutTime: IsNull() },
       // });
       // if (occupied.length) {
       //   return res.status(400).send('slot_occupied');

@@ -16,7 +16,7 @@ import { CreateSlotBookingDto } from './dtos/slot-booking.dto';
 import { VehiclesService } from '../vehicles/vehicles.service';
 import { ParkingSlotsService } from '../parking-slots/parking-slots.service';
 import { ParkingTicketsService } from '../parking-tickets/parking-tickets.service';
-import { MoreThan, MoreThanOrEqual } from 'typeorm';
+import { IsNull, MoreThan, MoreThanOrEqual } from 'typeorm';
 import { Response } from 'express';
 
 @Controller('slot-bookings')
@@ -66,7 +66,7 @@ export class SlotBookingsController {
 
       // check slot đã bị occupied/reserved chưa
       const ticket = await this.ticketsService.findOne({
-        where: { slotId: bookingDto.slotId, checkOutTime: null },
+        where: { slotId: bookingDto.slotId, checkOutTime: IsNull() },
       });
       const reserve = await this.slotBookingsService.findOne({
         where: {
