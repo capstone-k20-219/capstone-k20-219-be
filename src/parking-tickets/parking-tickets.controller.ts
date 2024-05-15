@@ -162,6 +162,11 @@ export class ParkingTicketsController {
       };
       const result = await this.ticketsService.create(ticket);
 
+      // remove the booking reservation
+      if (slotBooking) {
+        await this.slotBookingsService.remove(slotBooking.id);
+      }
+
       // send email to guest (?)
       // if (!checkInInfo.userId && checkInInfo.email) {
       // }
