@@ -16,7 +16,7 @@ export class ParkingTicket extends Base {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   slotId: string;
 
   @Column()

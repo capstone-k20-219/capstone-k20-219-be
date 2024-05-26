@@ -156,27 +156,27 @@ export class VehiclesController {
     }
   }
 
-  @Post('public/user/:userId')
-  @Public()
-  async createPublic(
-    @Param('userId') userId: string,
-    @Body() vehicle: CreateVehicleRequestDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const isDuplicate = await this.vehiclesService.findOne({
-        where: { plateNo: vehicle.plateNo },
-      });
-      if (isDuplicate) {
-        return res.status(400).send('vehicle_existed');
-      }
-      const result = await this.vehiclesService.create({
-        userId: userId,
-        ...vehicle,
-      });
-      return res.status(201).send(result);
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  }
+  // @Post('public/user/:userId')
+  // @Public()
+  // async createPublic(
+  //   @Param('userId') userId: string,
+  //   @Body() vehicle: CreateVehicleRequestDto,
+  //   @Res() res: Response,
+  // ) {
+  //   try {
+  //     const isDuplicate = await this.vehiclesService.findOne({
+  //       where: { plateNo: vehicle.plateNo },
+  //     });
+  //     if (isDuplicate) {
+  //       return res.status(400).send('vehicle_existed');
+  //     }
+  //     const result = await this.vehiclesService.create({
+  //       userId: userId,
+  //       ...vehicle,
+  //     });
+  //     return res.status(201).send(result);
+  //   } catch (err) {
+  //     res.status(500).send(err.message);
+  //   }
+  // }
 }
