@@ -14,6 +14,7 @@ import { ParkingTicketsModule } from './parking-tickets/parking-tickets.module';
 import { ServiceBookingsModule } from './service-bookings/service-bookings.module';
 import { SlotBookingsModule } from './slot-bookings/slot-bookings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ParkingTicketsModule,
     ServiceBookingsModule,
     SlotBookingsModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
